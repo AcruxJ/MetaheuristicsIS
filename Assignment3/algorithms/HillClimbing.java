@@ -21,10 +21,18 @@ public class HillClimbing extends OptimizationAlgorithm {
 		bestScore = evaluate(bestSolution);
 		boolean improves = true;
 		HashSet<Configuration> neighbours = new HashSet<>();
-		
+		double score;
 		while (improves){
 			improves = false;
 			neighbours = generateNeighbours(bestSolution);
+			for(Configuration neighbour : neighbours) {
+				score = evaluate(neighbour);
+				if(score<bestScore) {
+					bestSolution = neighbour;
+					bestScore = score;
+					improves = true;
+				}
+			}
 		}
 		
 		// Algorithms must call this function always!
@@ -36,7 +44,7 @@ public class HillClimbing extends OptimizationAlgorithm {
 		int[] values= conf.getValues();
 		for (int i = 0; i < values.length; i++) {
 			for (int j = i+1; j < values.length; j++) {
-				values= conf.getValues();
+				values = conf.getValues();
 				values[i] = conf.getValues()[j];
 				values[j] = conf.getValues()[i];
 				neighbours.add(new Configuration(values));
