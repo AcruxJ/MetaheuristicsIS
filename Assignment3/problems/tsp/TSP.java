@@ -93,14 +93,17 @@ public class TSP extends OptimizationProblem implements ProblemVisualizable{
 	 */
 	@Override
 	public double score(Configuration configuration) {
-		
-		/**
-		 * COMPLETAR
-		 */
-		
-		return 0;
+		double total = 0;
+		int[] values=configuration.getValues(); 
+		Position agentPosition;
+		agentPosition = posAgent;
+		for(int i=0;i<values.length;i++) {
+			total=dist(posCities.get(values[i]), agentPosition);
+			agentPosition = posCities.get(values[i]);
+		}
+		return total;
 	}
-	
+
 	/** 
 	 * Generates a random configuration. In this case, a permutation. 
 	 */
