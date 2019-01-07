@@ -1,6 +1,8 @@
 package algorithms;
 
+import java.awt.List;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import optimization.Configuration;
 import optimization.OptimizationAlgorithm;
@@ -10,41 +12,38 @@ import optimization.OptimizationAlgorithm;
  * configurations and stores the best.
  */
 public class HillClimbing extends OptimizationAlgorithm {
-
+	
 	@Override
 	public void search() {
 		// Algorithms must call this function always!
 		initSearch();
 		
 		// Generates all the configurations.
-		bestSolution= problem.genRandomConfiguration();
-		bestScore = evaluate(bestSolution);
+		Configuration initSolution= problem.genRandomConfiguration();
+		double currentscore = evaluate(initSolution);
 		boolean improves = true;
-		HashSet<Configuration> neighbours = new HashSet<>();
-		double score;
+		LinkedList<Configuration> neighbours = new LinkedList<>();
 		while (improves){
 			improves = false;
 			neighbours = generateNeighbours(bestSolution);
 			for(Configuration neighbour : neighbours) {
-				score = evaluate(neighbour);
-				if(score<bestScore) {
-					bestSolution = neighbour;
-					bestScore = score;
+				double newscore = evaluate(neighbour);
+				if(newscore<currentscore) {
+					currentscore=newscore;
 					improves = true;
 				}
 			}
 		}
-		
 		// Algorithms must call this function always!
 		stopSearch();
 	}
 
-	private HashSet<Configuration> generateNeighbours(Configuration conf) {
-		HashSet<Configuration> neighbours = new HashSet<>();
-		int[] values= conf.getValues();
+	private LinkedList<Configuration> generateNeighbours(Configuration conf) {
+		LinkedList<Configuration> neighbours = new LinkedList<>();
+		int[] values= conf.getValues().clone();
 		for (int i = 0; i < values.length; i++) {
 			for (int j = i+1; j < values.length; j++) {
-				values = conf.getValues();
+				values = conf.getValues().clone();
 				values[i] = conf.getValues()[j];
 				values[j] = conf.getValues()[i];
 				neighbours.add(new Configuration(values));

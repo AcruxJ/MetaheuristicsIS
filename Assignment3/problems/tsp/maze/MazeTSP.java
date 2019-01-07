@@ -35,7 +35,7 @@ public class MazeTSP extends TSP implements ProblemVisualizable{
 		Position agentPosition;
 		agentPosition = posAgent;
 		for(int i=0;i<values.length;i++) {
-			total=dist(posCities.get(values[i]), agentPosition);
+			total+=dist(posCities.get(values[i]), agentPosition);
 			agentPosition = posCities.get(values[i]);
 		}
 		return total;

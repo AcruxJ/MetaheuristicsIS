@@ -95,12 +95,13 @@ public class TSP extends OptimizationProblem implements ProblemVisualizable{
 	public double score(Configuration configuration) {
 		double total = 0;
 		int[] values=configuration.getValues(); 
-		Position agentPosition;
-		agentPosition = posAgent;
+		Position currentPosition;
+		currentPosition = posAgent;
 		for(int i=0;i<values.length;i++) {
-			total=dist(posCities.get(values[i]), agentPosition);
-			agentPosition = posCities.get(values[i]);
+			total+=dist(posCities.get(values[i]), currentPosition);
+			currentPosition = posCities.get(values[i]);
 		}
+		total+=dist(posExit, currentPosition);
 		return total;
 	}
 
