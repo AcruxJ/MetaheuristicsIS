@@ -20,9 +20,9 @@ public class GeneticAlgorithm extends OptimizationAlgorithm {
 	/** Number of generations */
 	private int generations;
 	/** Probability of crossover */
-	private int probCrossover;
+	private double probCrossover;
 	/** Probability of mutation */
-	private int probMutation;
+	private double probMutation;
 
 	@Override
 	public void search() {
@@ -63,7 +63,6 @@ public class GeneticAlgorithm extends OptimizationAlgorithm {
 				aux = values[x];
 				values[x] = values[y];
 				values[y] = aux;
-				aux = selectedPopulation.indexOf(conf);
 				mutatedPopulation.add(new Configuration(values));
 			}
 			else {
@@ -80,10 +79,10 @@ public class GeneticAlgorithm extends OptimizationAlgorithm {
 		Configuration child2;
 		int[] values1 = new int[problem.size()];
 		int[] values2 = new int[problem.size()];
-		ArrayList<Integer> ordered1 = new ArrayList<>();
-		ArrayList<Integer> ordered2 = new ArrayList<>();
-		ArrayList<Integer> valuesToOrder1 = new ArrayList<>();
-		ArrayList<Integer> valuesToOrder2 = new ArrayList<>();
+		ArrayList<Integer> ordered1;
+		ArrayList<Integer> ordered2;
+		ArrayList<Integer> valuesToOrder1;
+		ArrayList<Integer> valuesToOrder2;
 		Random rand = new Random();
 		int l;
 		int r;
@@ -93,6 +92,10 @@ public class GeneticAlgorithm extends OptimizationAlgorithm {
 				parent2 = selectedPopulation.get(1);
 				values1 = parent1.getValues().clone();
 				values2 = parent2.getValues().clone();
+				ordered1 = new ArrayList<>();
+				ordered2 = new ArrayList<>();
+				valuesToOrder1 = new ArrayList<>();
+				valuesToOrder2 = new ArrayList<>();
 				// Generates values for the 2PCS
 				l = 0;
 				r = 0;
@@ -119,7 +122,7 @@ public class GeneticAlgorithm extends OptimizationAlgorithm {
 					for (int j = 0; j < values1.length; j++) {
 						if (valuesToOrder2.contains(values1[j])) {
 							valuesToOrder2.remove(new Integer(values1[j]));
-							ordered1.add(values1[j]);
+							ordered2.add(values1[j]);
 						}
 					}
 				}
@@ -162,22 +165,25 @@ public class GeneticAlgorithm extends OptimizationAlgorithm {
 		double random;
 		LinkedList<Configuration> selectedPopulation = new LinkedList<>();
 		for (int i = 0; i < popSize; i++) {
-			rankSum += i;
+			rankSum += i+1;
 		}
 		// Orders the population by ascending score
 		Collections.sort(population);
 		// Creates probabilities for each rank (cumulatives)
 		ArrayList<Double> probabilities = new ArrayList<>();
-		probabilities.add((popSize + 2) / rankSum);
+		probabilities.add((popSize) / rankSum);
 		for (int i = 1; i < popSize; i++) {
-			probabilities.add((popSize - i + 2) / rankSum + probabilities.get(i - 1));
+			probabilities.add((popSize - i) / rankSum + probabilities.get(i-1));
 		}
+		
 		// adds the "popSize" elements obtain by randoms
-		for (int i = 0; i < popSize / 2; i++) {
+		for (int i = 0; i < popSize; i++) {
+			int size = selectedPopulation.size();
 			random = Math.random();
 			for (int j = 0; j < popSize; j++) {
-				if (probabilities.get(j) < random) {
+				if (probabilities.get(j) > random) {
 					selectedPopulation.add(population.get(j));
+					break;
 				}
 			}
 		}
@@ -216,8 +222,8 @@ public class GeneticAlgorithm extends OptimizationAlgorithm {
 			try {
 				popSize = Integer.parseInt(args[0]);
 				generations = Integer.parseInt(args[1]);
-				probCrossover = Integer.parseInt(args[2]);
-				probMutation = Integer.parseInt(args[3]);
+				probCrossover = Double.parseDouble(args[2]);
+				probMutation = Double.parseDouble(args[3]);
 
 				if (popSize % 2 == 1) {
 					popSize++;
